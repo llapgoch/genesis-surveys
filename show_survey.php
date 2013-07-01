@@ -18,9 +18,12 @@ if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 		
 	} else { 
 		
+		
+		
+		
 		//Save the survey details.
 		//$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on) VALUES(%d, DATE_ADD(NOW(), INTERVAL %f HOUR))", $survey_id, get_option('gmt_offset')));
-		$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on, user_id) VALUES(%d, NOW(), {wp_get_current_user()->ID})", $survey_id));
+		$wpdb->query($wpdb->prepare($sql = "INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on, user_id) VALUES(%d, NOW(), " . wp_get_current_user()->ID . ")", $survey_id));
 		$result_id = $wpdb->insert_id;
 
 		$question_count = 0;
@@ -84,14 +87,14 @@ if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 
 		}
 		
-		print t("Thanks for taking the survey. Your input is very valuable to us.<br />If you want, you can attach your name to your survey answers. If you want the result to be anonymous, just ignore this form.");
+		print t("Thanks for taking the survey. Your input is very valuable to us");
 		?>
-		<form action="" method="post" class="survey-form" style="text-align: left;">
+		<!-- <form action="" method="post" class="survey-form" style="text-align: left;">
 			<label for="name"><?php e("Name") ?></label> <input type="text" name="survey_taker_name" id="name" value="" /><br />
 			<label for="email"><?php e("Email") ?></label> <input type="text" name="email" id="email" value=""/><br />
 			<input type="submit" name="action" id="action-button" value="<?php e("Submit Survey") ?>"  />
 			<input type="hidden" name="result_id" value="<?php echo $result_id ?>" />
-		</form>
+		</form> -->
 	<?php
 	}
 } else { // Show The survey.

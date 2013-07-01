@@ -37,12 +37,23 @@ function surveys_init() {
  */
 add_shortcode( 'SURVEYS', 'surveys_shortcode' );
 function surveys_shortcode( $attr ) {
+	global $wpdb;
+	
 	if(!is_user_logged_in()){
 		echo "<p>You must be logged in to view questionnaires.</p>";
 		return;
 	}
 	
 	$survey_id = $attr[0];
+	
+	// Check whether the user has already completed this survey.
+	if($wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}surveys_result 
+		WHERE user_id=%d AND survey_ID=%d",  wp_get_current_user()->ID, $survey_id))){
+		
+		echo "<p>You have already completed this questionnaire.  Thank you.</p>";
+		return;
+	}
+	
 	
 	$contents = '';
 	if(is_numeric($survey_id)) { // Basic validiation - more on the show_quiz.php file.
