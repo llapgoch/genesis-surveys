@@ -14,6 +14,26 @@ if(isset($_REQUEST['submit'])) {
 	} else {
 		$wpdb->get_results("INSERT INTO {$wpdb->prefix}surveys_survey(name,description,status,added_on) VALUES('$_REQUEST[name]','$_REQUEST[description]','$_REQUEST[status]',NOW())");
 		$survey_id = $wpdb->insert_id;
+		
+		// Create the page for the survey
+		
+
+	 	$pageData = array(
+		'post_title' => $_REQUEST[name],
+		 	'post_content' => "[SURVEYS $survey_id]",
+		 	'post_status' => 'publish',
+		 	'post_type' => 'page',
+		 	'post_author' => $current_user->ID
+		 );
+
+	 if($pageID){
+		 wp_delete_post( $pageID, true);
+	 }
+	 
+	  $post_id = wp_insert_post($pageData);
+	  
+	  update_option("___SURVEYS___" . $survey_id, $post_id);
+		
 		wp_redirect($wpframe_wordpress . '/wp-admin/edit.php?page=surveys/question.php&message=new_survey&survey='.$survey_id);
 	}
 }

@@ -12,6 +12,11 @@ $GLOBALS['wpframe_plugin_folder'] = $GLOBALS['wpframe_siteurl'] . '/wp-content/p
 //$GLOBALS['wpframe_plugin_data'] = get_plugin_data($GLOBALS['wpframe_plugin_name'] . '.php');
 //* :DEBUG: */ $GLOBALS['wpdb']->show_errors();
 
+if(!session_id()){
+	session_start();
+}
+
+
 if(!function_exists('wpframe_add_editor_js')) { //Make sure multiple plugins can be created using WPFrame
 /// Adds the JS code needed for the editor. Changes often. So made it centralized
 function wpframe_add_editor_js() {

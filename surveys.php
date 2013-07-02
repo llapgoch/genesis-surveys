@@ -12,14 +12,17 @@ Author URI: http://www.binnyva.com/
  * Add a new menu under Manage, visible for all users with template viewing level.
  */
 add_action( 'admin_menu', 'surveys_add_menu_links');
-add_action('wp_login', 'check_active_surveys', 999, 2);
+add_action('wp_login', 'check_login_surveys', 999, 2);
+add_action('wp', 'check_survey_completion', 999);
 
 if(!session_id()){
 	session_start();
 }
 
-function check_active_surveys($userLogin, $user){
+function check_login_surveys($userLogin, $user){
 	global $wpdb;
+		
+	unset($_SESSION['___SURVEYS_COMPLETION___']);
 	
 	// Get a survey which the user hasn't completed
 	$row = $wpdb->get_row($sql = "SELECT s.* 
@@ -27,11 +30,43 @@ function check_active_surveys($userLogin, $user){
 				LEFT JOIN {$wpdb->prefix}surveys_result sr 
 					ON s.ID = sr.survey_ID 
 					AND sr.user_id = {$user->ID}
-				WHERE s.active = 1 
+				WHERE s.status = 1 
 					AND sr.user_id IS NULL");
+	if(!$row){
+		return;
+	}
 	
-	var_dump($row);
+	$_SESSION['___SURVEYS_COMPLETION___'] = $row->ID;
+}
+
+var_dump($_SESSION);
+
+function check_survey_completion(){
+	global $post;
+	
+	if(!isset($_SESSION['___SURVEYS_COMPLETION___'])){
+		return;
+	}
+	
+	// Get the page for the survey
+	if(!$pageID = get_option('___SURVEYS___' . $_SESSION['___SURVEYS_COMPLETION___'])){
+		return;
+	}
+	
+	// Check we're not on that page
+
+	if($post && $pageID == $post->ID){
+		return;
+	}
+		
+	if(!$uri = get_permalink($pageID)){
+		return;
+	}
+	
+	wp_redirect($uri);
 	exit;
+	
+	
 }
 
 

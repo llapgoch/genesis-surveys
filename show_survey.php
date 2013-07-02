@@ -1,6 +1,6 @@
 <?php
 include('wpframe.php');
-
+if(!session_id()){	session_start();}
 wpframe_stop_direct_call(__FILE__);
 
 if(!is_single() and isset($GLOBALS['surveys_client_includes_loaded'])) { #If this is in the listing page - and a quiz is already shown, don't show another.
@@ -13,8 +13,8 @@ $question = $wpdb->get_results($wpdb->prepare("SELECT ID,question,allow_user_ans
 
 if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 	if($_POST['result_id']) { //Save the name and the email of the survey taker.
-		$wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}surveys_result SET name=%s, email=%s WHERE ID=%d", strip_tags($_POST['survey_taker_name']), strip_tags($_POST['email']), $_POST['result_id']));
-		e("Thanks for taking the survey. Your details have been saved.");
+		// $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}surveys_result SET name=%s, email=%s WHERE ID=%d", strip_tags($_POST['survey_taker_name']), strip_tags($_POST['email']), $_POST['result_id']));
+// 		e("Thanks for taking the survey. Your details have been saved.");
 		
 	} else { 
 		
@@ -25,7 +25,11 @@ if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 		//$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on) VALUES(%d, DATE_ADD(NOW(), INTERVAL %f HOUR))", $survey_id, get_option('gmt_offset')));
 		$wpdb->query($wpdb->prepare($sql = "INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on, user_id) VALUES(%d, NOW(), " . wp_get_current_user()->ID . ")", $survey_id));
 		$result_id = $wpdb->insert_id;
-
+		
+		
+		unset($_SESSION['___SURVEYS_COMPLETION___']);
+		die("UNSET");
+		
 		$question_count = 0;
 		foreach($_POST['question_id'] as $question_id) {
 			if(!$_POST['answer-' . $question_id]) { //User ignored the question.
