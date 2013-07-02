@@ -92,8 +92,8 @@ jQuery(document).ready(init);
 
 <?php
 for($i=1; $i<=$anscount; $i++) { ?>
-<p><textarea name="answer[]" class="answer" rows="3" cols="50"><?php if($action == 'edit') echo $answer[$i-1]->answer; ?></textarea></p>
-<input type="hidden" name="answer_id[]" value="<?php echo $answer[$i-1]->ID ?>" />
+<p><textarea name="answer[]" class="answer" rows="3" cols="50"><?php if($action == 'edit') echo esc_attr($answer[$i-1]->answer); ?></textarea></p>
+<input type="hidden" name="answer_id[]" value="<?php echo esc_attr($answer[$i-1]->ID) ?>" />
 <?php } ?>
 
 <div id="extra-answers"></div>

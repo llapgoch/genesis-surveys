@@ -25,13 +25,13 @@ else e('Edit Survey'); ?></h2>
 <div class="postbox">
 <h3 class="hndle"><span><?php e('Survey Name') ?></span></h3>
 <div class="inside">
-<input type='text' name='name' value='<?php echo $survey_details->name; ?>' />
+<input type='text' name='name' value='<?php echo esc_attr($survey_details->name); ?>' />
 </div></div>
 
 <div class="postbox">
 <h3 class="hndle"><span><?php e('Description') ?></span></h3>
 <div class="inside">
-<textarea name='description' rows='5' cols='50' style='width:100%'><?php echo $survey_details->description?></textarea>
+<textarea name='description' rows='5' cols='50' style='width:100%'><?php echo esc_attr($survey_details->description);?></textarea>
 </div></div>
 
 <div class="postbox">

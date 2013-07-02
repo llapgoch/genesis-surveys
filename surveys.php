@@ -11,7 +11,32 @@ Author URI: http://www.binnyva.com/
 /**
  * Add a new menu under Manage, visible for all users with template viewing level.
  */
-add_action( 'admin_menu', 'surveys_add_menu_links' );
+add_action( 'admin_menu', 'surveys_add_menu_links');
+add_action('wp_login', 'check_active_surveys', 999, 2);
+
+if(!session_id()){
+	session_start();
+}
+
+function check_active_surveys($userLogin, $user){
+	global $wpdb;
+	
+	// Get a survey which the user hasn't completed
+	$row = $wpdb->get_row($sql = "SELECT s.* 
+				FROM {$wpdb->prefix}surveys_survey s
+				LEFT JOIN {$wpdb->prefix}surveys_result sr 
+					ON s.ID = sr.survey_ID 
+					AND sr.user_id = {$user->ID}
+				WHERE s.active = 1 
+					AND sr.user_id IS NULL");
+	
+	var_dump($row);
+	exit;
+}
+
+
+
+
 function surveys_add_menu_links() {
 	global $wp_version, $_registered_pages;
 	$view_level= 2;

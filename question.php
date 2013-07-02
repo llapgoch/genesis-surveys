@@ -69,14 +69,14 @@ $survey_name = $wpdb->get_var($wpdb->prepare("SELECT name FROM {$wpdb->prefix}su
 ?>
 
 <div class="wrap">
-<h2><?php echo t("Manage Questions in ") . " '$survey_name'"; ?></h2>
+<h2><?php echo t("Manage Questions in ") . " '" . esc_attr($survey_name) . "'"; ?></h2>
 
 <?php
 wp_enqueue_script( 'listman' );
 wp_print_scripts();
 ?>
 
-<p><?php e('To add this survey to your blog, insert the code %s into any post.', '[SURVEYS '.$_REQUEST['survey'].']') ?></p>
+<p><?php //e('To add this survey to your blog, insert the code %s into any post.', '[SURVEYS '.$_REQUEST['survey'].']') ?></p>
 
 <table class="widefat">
 	<thead>
@@ -104,7 +104,7 @@ if (count($all_question)) {
 		print "<tr id='question-{$question->ID}' class='$class'>\n";
 		?>
 		<th scope="row" style="text-align: center;"><?php echo $question_count ?></th>
-		<td><?php echo $question->question ?></td>
+		<td><?php echo esc_attr(strip_tags($question->question)) ?></td>
 		<td><?php echo $question->answer_count ?></td>
 		<td><a href='edit.php?page=surveys/question_form.php&amp;question=<?php echo $question->ID?>&amp;action=edit&amp;survey=<?php echo $_REQUEST['survey']?>' class='edit'><?php e('Edit'); ?></a></td>
 		<td><a href='edit.php?page=surveys/question.php&amp;action=delete&amp;question=<?php echo $question->ID?>&amp;survey=<?php echo $_REQUEST['survey']?>' class='delete' onclick="return confirm('<?php e(addslashes("You are about to delete this question. This will delete the answers to this question. Press 'OK' to delete and 'Cancel' to stop."))?>');"><?php e('Delete')?></a></td>

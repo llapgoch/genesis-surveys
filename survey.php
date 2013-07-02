@@ -62,8 +62,8 @@ if (count($all_survey)) {
 		print "<tr id='survey-{$survey->ID}' class='$class'>\n";
 		?>
 		<th scope="row" style="text-align: center;"><?php echo $survey->ID ?></th>
-		<td><?php echo $survey->name ?></td>
-		<td><?php echo $survey->question_count ?></td>
+		<td><?php echo esc_attr($survey->name) ?></td>
+		<td><?php echo esc_attr($survey->question_count) ?></td>
 		<td><a href="edit.php?page=surveys/responses.php&amp;survey=<?php echo $survey->ID?>"><?php echo $survey->response_count ?> <?php e('Responses') ?></a></td>
 		<td>[SURVEYS <?php echo $survey->ID ?>]</td>
 		<td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($survey->added_on)) ?></td>
