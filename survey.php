@@ -2,6 +2,7 @@
 include('wpframe.php');
 wpframe_stop_direct_call(__FILE__);
 
+
 if($_REQUEST['message'] == 'updated') {
 	print '<div id="message" class="updated fade"><p>' . t('Survey Updated') .'</p></div>';
 }

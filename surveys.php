@@ -21,6 +21,20 @@ add_action('wp_login', 'check_login_surveys', 999, 2);
 add_action('wp_logout', 'remove_survey_check');
 add_action('wp', 'check_survey_completion', 999);
 
+add_action('admin_init', 'surveys_export');
+
+function surveys_export(){
+
+	if($_GET['page'] !== 'surveys/export.php'){
+		return;
+	}
+	
+	global $wpdb;
+	
+	include(dirname(__FILE__) . "/export.php");
+	exit;
+}
+
 function check_login_surveys($userLogin, $user){
 	global $wpdb;
 		
@@ -159,7 +173,7 @@ function surveys_activate() {
 	$database_version = '5';
 	$installed_db = get_option('surveys_db_version');
 	
-	if($database_version != $installed_db) {
+	//if($database_version != $installed_db) {
 		require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
 		// Create the table structure
 		$sql = "CREATE TABLE {$wpdb->prefix}surveys_answer (
@@ -167,6 +181,7 @@ function surveys_activate() {
 					question_ID int(11) unsigned NOT NULL,
 					answer varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 					sort_order int(3) NOT NULL,
+					required int(1) NOT NULL default '0',
 					INDEX ( question_ID ),
 					PRIMARY KEY  (ID)
 					) ;
@@ -183,8 +198,7 @@ function surveys_activate() {
 				CREATE TABLE {$wpdb->prefix}surveys_result (
 					ID int(11) unsigned NOT NULL auto_increment,
 					survey_ID int(11) unsigned NOT NULL,
-					name varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
-					email varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+					user_id int(11) NOT NULL,
 					added_on datetime NOT NULL,
 					INDEX ( survey_ID ),
 					PRIMARY KEY  (ID)
@@ -210,11 +224,11 @@ function surveys_activate() {
 					PRIMARY KEY  (ID)
 					) ;";
 		
-		if($database_version == 2) {
-			$wpdb->query("UPDATE {$wpdb->prefix}surveys_result_answer RA 
-				SET question_ID=(SELECT question_ID FROM {$wpdb->prefix}surveys_answer WHERE ID=RA.answer_ID)");
-		}
+		// if($database_version == 2) {
+// 			$wpdb->query("UPDATE {$wpdb->prefix}surveys_result_answer RA 
+// 				SET question_ID=(SELECT question_ID FROM {$wpdb->prefix}surveys_answer WHERE ID=RA.answer_ID)");
+// 		}
 		dbDelta($sql);
 		update_option( "surveys_db_version", $database_version );
-	}
+		//}
 }

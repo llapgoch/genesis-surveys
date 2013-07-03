@@ -45,7 +45,7 @@ if(isset($_REQUEST['paged']) and $_REQUEST['paged']) {
 }
 
 // Retrieve the survey results
-$results = $wpdb->get_results("SELECT ID, user_id, name,email, added_on FROM {$wpdb->prefix}surveys_result WHERE survey_ID=$survey_id ORDER BY added_on DESC LIMIT $offset, $items_per_page");
+$results = $wpdb->get_results("SELECT ID, user_id, added_on FROM {$wpdb->prefix}surveys_result WHERE survey_ID=$survey_id ORDER BY added_on DESC LIMIT $offset, $items_per_page");
 
 
 

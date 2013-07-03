@@ -4,7 +4,7 @@ require('wpframe.php');
 <div class="wrap">
 <h2><?php e("Export Data") ?></h2>
 
-<form action="<?php echo $GLOBALS['wpframe_plugin_folder'] ?>/export.php" method="post">
+<form action="edit.php?page=surveys/export.php" method="post">
 <p><?php e("Select the fields you want to export...") ?></p>
 
 <?php
