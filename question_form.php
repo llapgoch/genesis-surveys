@@ -104,7 +104,7 @@ for($i=1; $i<=$anscount; $i++) { ?>
 <input type="checkbox" id="required" name="required" value="1" <?php if($question->required) echo 'checked=checked' ?> /><br />
 <br />
 
-<label for="allow_user_answer"><?php e('Allow User Inputed Answers') ?></label>
+<label for="allow_user_answer"><?php e('Allow User Input Answers') ?></label>
 <input type="checkbox" id="allow_user_answer" name="allow_user_answer" value="1" <?php if($question->allow_user_answer) echo 'checked=checked' ?> /><br />
 
 

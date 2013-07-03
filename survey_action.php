@@ -20,6 +20,7 @@ if(isset($_REQUEST['submit'])) {
 
 	 	$pageData = array(
 		'post_title' => $_REQUEST[name],
+			'comment_status' => 'closed',
 		 	'post_content' => "[SURVEYS $survey_id]",
 		 	'post_status' => 'publish',
 		 	'post_type' => 'page',
