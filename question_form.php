@@ -9,7 +9,7 @@ $question = array();
 $answer = array();
 if($action == 'edit') {
 	$answer		= $wpdb->get_results($wpdb->prepare("SELECT ID, answer FROM {$wpdb->prefix}surveys_answer WHERE question_ID=%d ORDER BY sort_order", $_REQUEST['question']));
-	$question	= $wpdb->get_row($wpdb->prepare("SELECT question,allow_user_answer,allow_multiple_answers,user_answer_format FROM {$wpdb->prefix}surveys_question WHERE ID=%d", $_REQUEST['question']));
+	$question	= $wpdb->get_row($wpdb->prepare("SELECT question,allow_user_answer,allow_multiple_answers,user_answer_format, required FROM {$wpdb->prefix}surveys_question WHERE ID=%d", $_REQUEST['question']));
 }
 
 $anscount = 4;
@@ -100,8 +100,15 @@ for($i=1; $i<=$anscount; $i++) { ?>
 
 <a href="javascript:newAnswer();"><?php e("Add New Answer"); ?></a><br /><br />
 
+<label for="required"><?php e('Answer is required') ?></label>
+<input type="checkbox" id="required" name="required" value="1" <?php if($question->required) echo 'checked=checked' ?> /><br />
+<br />
+
 <label for="allow_user_answer"><?php e('Allow User Inputed Answers') ?></label>
 <input type="checkbox" id="allow_user_answer" name="allow_user_answer" value="1" <?php if($question->allow_user_answer) echo 'checked=checked' ?> /><br />
+
+
+
 <div id="user_answer_format_area" <?php if(!$question->allow_user_answer) echo 'style="display:none;"'; ?>>
 <label for="user_answer_format"><?php e('User Answer Format') ?></label>
 <select id="user_answer_format" name="user_answer_format">
@@ -109,6 +116,7 @@ for($i=1; $i<=$anscount; $i++) { ?>
 <option value="textarea" <?php if($question->user_answer_format == 'textarea') echo 'selected="selected"'; ?>><?php e('Textarea') ?></option>
 <option value="checkbox" <?php if($question->user_answer_format == 'checkbox') echo 'selected="selected"'; ?>><?php e('CheckBox') ?></option>
 </select>
+
 </div>
 
 

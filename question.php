@@ -7,9 +7,9 @@ if($_REQUEST['action'] == 'edit') $action = 'edit';
 
 if(isset($_REQUEST['submit'])) {
 	if($action == 'edit') { //update goes here
-		$wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}surveys_question SET question='%s',allow_user_answer=%d,allow_multiple_answers=%d,user_answer_format=%s, survey_ID=%d WHERE ID=%d", 
+		$wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}surveys_question SET question='%s',allow_user_answer=%d,allow_multiple_answers=%d,user_answer_format=%s, survey_ID=%d, required=%d WHERE ID=%d", 
 										stripslashes($_REQUEST['content']), $_REQUEST['allow_user_answer'], $_REQUEST['allow_multiple_answers'], $_REQUEST['user_answer_format'], 
-										$_REQUEST['survey'], $_REQUEST['question']));
+										$_REQUEST['survey'], $_REQUEST['required'], $_REQUEST['question']));
 		
 		$question_id = $_REQUEST['question'];
 	

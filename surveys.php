@@ -181,7 +181,6 @@ function surveys_activate() {
 					question_ID int(11) unsigned NOT NULL,
 					answer varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 					sort_order int(3) NOT NULL,
-					required int(1) NOT NULL default '0',
 					INDEX ( question_ID ),
 					PRIMARY KEY  (ID)
 					) ;
@@ -192,6 +191,7 @@ function surveys_activate() {
 					allow_user_answer int(1) NOT NULL default '0',
 					allow_multiple_answers int(2) NOT NULL default '0',
 					user_answer_format enum('entry','textarea','checkbox') NOT NULL default 'entry',
+					required int(1) NOT NULL default '0',
 					PRIMARY KEY  (ID),
 					KEY survey_id (survey_ID)
 					) ;
