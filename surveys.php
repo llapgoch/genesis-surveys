@@ -11,27 +11,30 @@ Author URI: http://www.binnyva.com/
 /**
  * Add a new menu under Manage, visible for all users with template viewing level.
  */
-add_action( 'admin_menu', 'surveys_add_menu_links');
-add_action('wp_login', 'check_login_surveys', 999, 2);
-add_action('wp', 'check_survey_completion', 999);
 
 if(!session_id()){
 	session_start();
 }
 
+add_action( 'admin_menu', 'surveys_add_menu_links');
+add_action('wp_login', 'check_login_surveys', 999, 2);
+add_action('wp_logout', 'remove_survey_check');
+add_action('wp', 'check_survey_completion', 999);
+
 function check_login_surveys($userLogin, $user){
 	global $wpdb;
 		
-	unset($_SESSION['___SURVEYS_COMPLETION___']);
+	remove_survey_check();
 	
 	// Get a survey which the user hasn't completed
 	$row = $wpdb->get_row($sql = "SELECT s.* 
-				FROM {$wpdb->prefix}surveys_survey s
-				LEFT JOIN {$wpdb->prefix}surveys_result sr 
-					ON s.ID = sr.survey_ID 
-					AND sr.user_id = {$user->ID}
-				WHERE s.status = 1 
-					AND sr.user_id IS NULL");
+		FROM {$wpdb->prefix}surveys_survey s
+		LEFT JOIN {$wpdb->prefix}surveys_result sr 
+			ON s.ID = sr.survey_ID 
+			AND sr.user_id = {$user->ID}
+		WHERE s.status = 1 
+			AND sr.user_id IS NULL");
+			
 	if(!$row){
 		return;
 	}
@@ -39,11 +42,20 @@ function check_login_surveys($userLogin, $user){
 	$_SESSION['___SURVEYS_COMPLETION___'] = $row->ID;
 }
 
-var_dump($_SESSION);
+function remove_survey_check(){
+	unset($_SESSION['___SURVEYS_COMPLETION___']);
+}
 
+/* This should only redirect the user after an initial login, and force them to enter this survey */
 function check_survey_completion(){
 	global $post;
-	
+	 
+	 if(isset(wp_get_current_user()->roles)){
+		 if(!in_array('subscriber', wp_get_current_user()->roles)){
+			 return;
+		 }
+	 }
+	 
 	if(!isset($_SESSION['___SURVEYS_COMPLETION___'])){
 		return;
 	}
@@ -65,8 +77,6 @@ function check_survey_completion(){
 	
 	wp_redirect($uri);
 	exit;
-	
-	
 }
 
 

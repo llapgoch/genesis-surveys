@@ -28,7 +28,6 @@ if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 		
 		
 		unset($_SESSION['___SURVEYS_COMPLETION___']);
-		die("UNSET");
 		
 		$question_count = 0;
 		foreach($_POST['question_id'] as $question_id) {
