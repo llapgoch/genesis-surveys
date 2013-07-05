@@ -3,24 +3,79 @@ include('wpframe.php');
 if(!session_id()){	session_start();}
 wpframe_stop_direct_call(__FILE__);
 
+function isAnswerSelected($question, $ans, $type = null){
+	if(!$ans |! $_POST){
+		return '';
+	}
+	
+	if(!isset($_POST['answer-' . $question->ID])){
+		return '';
+	}
+	
+	if($type == 'user'){
+		if(in_array('user-answer', $_POST['answer-' . $question->ID])){
+			return "checked='checked'";
+		}
+	}else{
+		if(in_array($ans->ID, $_POST['answer-' . $question->ID])){
+			return "checked='checked'";
+		}
+	}
+	return '';
+}
+
+function getUserAnswerValue($question, $ans){
+	if(!$ans |! $_POST){
+		return '';
+	}
+	
+	if(!isset($_POST['user-answer-' . $question->ID])){
+		return '';
+	}
+	
+	return esc_attr($_POST['user-answer-' . $question->ID]);
+}
+
 if(!is_single() and isset($GLOBALS['surveys_client_includes_loaded'])) { #If this is in the listing page - and a quiz is already shown, don't show another.
 	printf(t("Please go to <a href='%s'>%s</a> to view the survey"), get_permalink(), get_the_title());
 } else {
 
 global $wpdb;
 
-$question = $wpdb->get_results($wpdb->prepare("SELECT ID,question,allow_user_answer,allow_multiple_answers,user_answer_format FROM {$wpdb->prefix}surveys_question WHERE survey_ID=%d ORDER BY ID", $survey_id));
+$question = $wpdb->get_results($wpdb->prepare("SELECT ID,question,allow_user_answer,allow_multiple_answers,user_answer_format, required FROM {$wpdb->prefix}surveys_question WHERE survey_ID=%d ORDER BY ID", $survey_id));
 
-if(isset($_POST['action']) and $_POST['action']) { // Save the survey
-	if($_POST['result_id']) { //Save the name and the email of the survey taker.
-		// $wpdb->query($wpdb->prepare("UPDATE {$wpdb->prefix}surveys_result SET name=%s, email=%s WHERE ID=%d", strip_tags($_POST['survey_taker_name']), strip_tags($_POST['email']), $_POST['result_id']));
-// 		e("Thanks for taking the survey. Your details have been saved.");
-		
-	} else { 
-		
-		
-		
-		
+$errors = array();
+
+
+if($_POST){
+// Validate the survey
+
+	foreach($question as $q){
+
+		if($q->required){
+			
+			if(!isset($_POST["answer-{$q->ID}"]) || !$_POST["answer-{$q->ID}"]){
+				$errors["answer-{$q->ID}"] = array(
+					'type' => 'required'
+				);
+			} 
+			
+			// Check a user answer has been entered
+			if(is_array($_POST["answer-{$q->ID}"]) && in_array("user-answer", $_POST["answer-{$q->ID}"])){
+				
+				if(!isset($_POST["user-answer-{$q->ID}"]) || !$_POST["user-answer-{$q->ID}"]){
+
+					$errors["answer-{$q->ID}"] = array(
+						'type' => 'required'
+					);
+				}
+			} 
+		}
+	}
+}
+
+
+if(isset($_POST['action']) && $_POST['action'] && !$errors) { // Save the survey
 		//Save the survey details.
 		//$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on) VALUES(%d, DATE_ADD(NOW(), INTERVAL %f HOUR))", $survey_id, get_option('gmt_offset')));
 		$wpdb->query($wpdb->prepare($sql = "INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on, user_id) VALUES(%d, NOW(), " . wp_get_current_user()->ID . ")", $survey_id));
@@ -91,15 +146,8 @@ if(isset($_POST['action']) and $_POST['action']) { // Save the survey
 		}
 		
 		print t("Thanks for taking the survey. Your input is very valuable to us");
-		?>
-		<!-- <form action="" method="post" class="survey-form" style="text-align: left;">
-			<label for="name"><?php e("Name") ?></label> <input type="text" name="survey_taker_name" id="name" value="" /><br />
-			<label for="email"><?php e("Email") ?></label> <input type="text" name="email" id="email" value=""/><br />
-			<input type="submit" name="action" id="action-button" value="<?php e("Submit Survey") ?>"  />
-			<input type="hidden" name="result_id" value="<?php echo $result_id ?>" />
-		</form> -->
-	<?php
-	}
+
+	
 } else { // Show The survey.
 
 	if(!isset($GLOBALS['surveys_client_includes_loaded'])) {
@@ -115,6 +163,11 @@ if($question) {
 $questions_per_page = get_option('surveys_questions_per_page');
 if(!is_numeric($questions_per_page)) $questions_per_page = 0;
 
+if($errors){
+?>
+<div class="survey-errors">Please complete all of the required questions</div>
+<?php
+}
 ?>
 
 <div class="survey-area <?php if($questions_per_page != 1) echo 'multi-question'; ?>">
@@ -124,7 +177,7 @@ $question_count = 1;
 
 foreach ($question as $ques) {
 	echo "<div class='survey-question' id='question-$question_count'>";
-	echo "{$ques->question}\n";
+	echo "<label class='" . ($ques->required ? 'answer_required' : '') . ' ' . (isset($errors["answer-{$ques->ID}"]) ? "error" : "") . "'>{$ques->question}</label>";
 	echo "<input type='hidden' name='question_id[]' value='{$ques->ID}' />\n";
 	$all_answers = $wpdb->get_results("SELECT ID,answer FROM {$wpdb->prefix}surveys_answer WHERE question_id={$ques->ID} ORDER BY sort_order");
 	
@@ -134,19 +187,19 @@ foreach ($question as $ques) {
 	if(count($all_answers) or $ques->user_answer_format == 'textarea') echo "<br />";
 	
 	foreach ($all_answers as $ans) {
-		echo "<input type='$type' name='answer-{$ques->ID}[]' id='answer-id-{$ans->ID}' class='answer' value='{$ans->ID}' />\n";
+		echo "<input type='$type' " . isAnswerSelected($ques, $ans) . " name='answer-{$ques->ID}[]' id='answer-id-{$ans->ID}' class='answer' value='{$ans->ID}' />\n";
 		echo "<label for='answer-id-{$ans->ID}'>" . stripslashes($ans->answer) . "</label><br />\n";
 	}
 	
 	if($ques->allow_user_answer) {
-		echo "<input type='$type' name='answer-{$ques->ID}[]' id='answer-id-{$ans->ID}' class='answer' value='user-answer' />\n";
+		echo "<input type='$type' " . isAnswerSelected($ques, $ans, 'user') . " name='answer-{$ques->ID}[]' id='user-answer-id-{$ans->ID}' class='answer' value='user-answer' />\n";
 		
 		if($ques->user_answer_format == 'textarea')
-			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer'></textarea>";
+			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer'>" . getUserAnswerValue($ques, $ans) . "</textarea>";
 		elseif($ques->user_answer_format == 'checkbox')
 			echo "<input type='checkbox' name='user-answer-{$ques->ID}' class='user-answer' value='1' />";
 		else
-			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer' value='' />";
+			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer' value='" . getUserAnswerValue($ques, $ans) . "' />";
 		
 		echo "<br />\n";
 	}
