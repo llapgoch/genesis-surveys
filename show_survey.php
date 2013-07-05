@@ -33,7 +33,7 @@ function getUserAnswerValue($question, $ans){
 		return '';
 	}
 	
-	return esc_attr($_POST['user-answer-' . $question->ID]);
+	return esc_attr(stripslashes($_POST['user-answer-' . $question->ID]));
 }
 
 if(!is_single() and isset($GLOBALS['surveys_client_includes_loaded'])) { #If this is in the listing page - and a quiz is already shown, don't show another.
