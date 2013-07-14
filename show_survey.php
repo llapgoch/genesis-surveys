@@ -165,7 +165,8 @@ if(!is_numeric($questions_per_page)) $questions_per_page = 0;
 
 if($errors){
 ?>
-<div class="survey-errors">Please complete all of the required questions</div>
+<div class="error"><div class="msg">Please complete all of the required questions</div><a href="#" class="toggle-alert">Toggle</a></div>
+
 <?php
 }
 ?>
