@@ -165,20 +165,26 @@ if(!is_numeric($questions_per_page)) $questions_per_page = 0;
 
 if($errors){
 ?>
-<div class="error"><div class="msg">Please complete all of the required questions</div><a href="#" class="toggle-alert">Toggle</a></div>
+<div class="alert error spaced"><div class="msg">Please complete all of the required questions</div><a href="#" class="toggle-alert">Toggle</a></div>
 
 <?php
 }
 ?>
 
 <div class="survey-area <?php if($questions_per_page != 1) echo 'multi-question'; ?>">
-<form action="" method="post" class="survey-form" id="survey-<?php echo $survey_id?>">
+<form action="" method="post" class="input-form survey-form" id="survey-<?php echo $survey_id?>">
 <?php
 $question_count = 1;
 
 foreach ($question as $ques) {
-	echo "<div class='survey-question' id='question-$question_count'>";
-	echo "<label class='" . ($ques->required ? 'answer_required' : '') . ' ' . (isset($errors["answer-{$ques->ID}"]) ? "error" : "") . "'>{$ques->question}</label>";
+	
+	echo "<div class='question-container survey-question' id='question-$question_count'>";
+	?>
+	<div class="title">
+		<h3><?php echo "<label class='general-label " . ($ques->required ? 'answer_required' : '') . ' ' . (isset($errors["answer-{$ques->ID}"]) ? "error" : "") . "'>{$ques->question}</label>";?></h3>
+		<div class="title-sep-container"><div class="title-sep"></div></div>
+	</div>
+	<?php
 	echo "<input type='hidden' name='question_id[]' value='{$ques->ID}' />\n";
 	$all_answers = $wpdb->get_results("SELECT ID,answer FROM {$wpdb->prefix}surveys_answer WHERE question_id={$ques->ID} ORDER BY sort_order");
 	
@@ -211,8 +217,9 @@ foreach ($question as $ques) {
 
 ?><br />
 <input type="button" id="survey-next-question" value="<?php e("Next") ?> &gt;"  /><br />
-
-<input type="submit" name="action" id="survey-action-button" value="<?php e("Submit Survey") ?>"  />
+<div class="button-c-container">
+	<button type="submit" name="action" id="survey-action-button" class="button large green saveform"><?php e("Submit Survey") ?></button>
+</div>
 <input type="hidden" name="survey_id" value="<?php echo $survey_id ?>" />
 </form>
 
