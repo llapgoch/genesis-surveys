@@ -74,8 +74,8 @@ if($_POST){
 	}
 }
 
-
-if(isset($_POST['action']) && $_POST['action'] && !$errors) { // Save the survey
+if(isset($_POST['action']) && $_POST['action'] && !$errors) { 
+	// Save the survey
 		//Save the survey details.
 		//$wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on) VALUES(%d, DATE_ADD(NOW(), INTERVAL %f HOUR))", $survey_id, get_option('gmt_offset')));
 		$wpdb->query($wpdb->prepare($sql = "INSERT INTO {$wpdb->prefix}surveys_result (survey_ID, added_on, user_id) VALUES(%d, NOW(), " . wp_get_current_user()->ID . ")", $survey_id));
@@ -218,7 +218,7 @@ foreach ($question as $ques) {
 ?><br />
 <input type="button" id="survey-next-question" value="<?php e("Next") ?> &gt;"  /><br />
 <div class="button-c-container">
-	<button type="submit" name="action" id="survey-action-button" class="button large green saveform"><?php e("Submit Survey") ?></button>
+	<button type="submit" name="action" value="save" id="survey-action-button" class="button large green saveform"><?php e("Submit Survey") ?></button>
 </div>
 <input type="hidden" name="survey_id" value="<?php echo $survey_id ?>" />
 </form>

@@ -19,9 +19,12 @@ if(!session_id()){
 add_action( 'admin_menu', 'surveys_add_menu_links');
 add_action('wp_login', 'check_login_surveys', 999, 2);
 add_action('wp_logout', 'remove_survey_check');
-add_action('wp', 'check_survey_completion', 999);
+//add_action('wp', 'check_survey_completion', 999);
 
 add_action('admin_init', 'surveys_export');
+
+add_shortcode('survey_completion_message', 'get_survey_completion_message');
+
 
 function surveys_export(){
 
@@ -54,6 +57,12 @@ function check_login_surveys($userLogin, $user){
 	}
 	
 	$_SESSION['___SURVEYS_COMPLETION___'] = $row->ID;
+}
+
+function get_survey_completion_message(){
+	if($uri = get_noncompleted_survey()){
+		return "<a href='$uri'>" . __('Please click here to complete a quick survey on our clinical trial') . "</a>";
+	}
 }
 
 function remove_survey_check(){
@@ -89,10 +98,44 @@ function check_survey_completion(){
 		return;
 	}
 	
-	wp_redirect($uri);
-	exit;
+	$res = do_action('before_survey_redirect');
+
+//	wp_redirect($uri);
+//	exit;
 }
 
+function get_noncompleted_survey(){
+	global $post;
+	 
+	 if(isset(wp_get_current_user()->roles)){
+		 if(!in_array('subscriber', wp_get_current_user()->roles)){
+			 return;
+		 }
+	 }
+	 
+	if(!isset($_SESSION['___SURVEYS_COMPLETION___'])){
+		return;
+	}
+	
+	// Get the page for the survey
+	if(!$pageID = get_option('___SURVEYS___' . $_SESSION['___SURVEYS_COMPLETION___'])){
+		return;
+	}
+	
+	// Check we're not on that page
+
+	if($post && $pageID == $post->ID){
+		return;
+	}
+		
+	if(!$uri = get_permalink($pageID)){
+		return;
+	}
+	
+	$res = do_action('before_survey_redirect');
+
+	return $uri;
+}
 
 
 
