@@ -106,19 +106,29 @@ function check_survey_completion(){
 
 function get_noncompleted_survey(){
 	global $post;
-	 
-	 if(isset(wp_get_current_user()->roles)){
-		 if(!in_array('subscriber', wp_get_current_user()->roles)){
-			 return;
-		 }
-	 }
-	 
-	if(!isset($_SESSION['___SURVEYS_COMPLETION___'])){
-		return;
-	}
+	global $wpdb;
+	$user = wp_get_current_user();
+	
+// 	 if(isset(wp_get_current_user()->roles)){
+// 		 if(!in_array('subscriber', wp_get_current_user()->roles)){
+// //			 return;
+// 		 }
+// 	 }
+	 	
+ 	$row = $wpdb->get_row($sql = "SELECT s.* 
+ 		FROM {$wpdb->prefix}surveys_survey s
+ 		LEFT JOIN {$wpdb->prefix}surveys_result sr 
+ 			ON s.ID = sr.survey_ID 
+ 			AND sr.user_id = {$user->ID}
+ 		WHERE s.status = 1 
+ 			AND sr.user_id IS NULL");
+			
+ 	if(!$row){
+ 		return;
+ 	}
 	
 	// Get the page for the survey
-	if(!$pageID = get_option('___SURVEYS___' . $_SESSION['___SURVEYS_COMPLETION___'])){
+	if(!$pageID = get_option('___SURVEYS___' . $row->ID)){
 		return;
 	}
 	
@@ -131,8 +141,6 @@ function get_noncompleted_survey(){
 	if(!$uri = get_permalink($pageID)){
 		return;
 	}
-	
-	$res = do_action('before_survey_redirect');
 
 	return $uri;
 }

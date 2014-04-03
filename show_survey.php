@@ -182,7 +182,6 @@ foreach ($question as $ques) {
 	?>
 	<div class="title">
 		<h3><?php echo "<label class='general-label " . ($ques->required ? 'answer_required' : '') . ' ' . (isset($errors["answer-{$ques->ID}"]) ? "error" : "") . "'>{$ques->question}</label>";?></h3>
-		<div class="title-sep-container"><div class="title-sep"></div></div>
 	</div>
 	<?php
 	echo "<input type='hidden' name='question_id[]' value='{$ques->ID}' />\n";
@@ -191,7 +190,7 @@ foreach ($question as $ques) {
 	$type = ($ques->allow_multiple_answers) ? 'checkbox' : 'radio'; //If this is a multi answer question, make it a checkbox. Else, it will be a radio.
 	if(count($all_answers) == 0 and $ques->allow_user_answer) $type = 'hidden'; //If there are no admin specified answer, and it allows user answer, keep it as selected - user don't have to check anything.
 	
-	if(count($all_answers) or $ques->user_answer_format == 'textarea') echo "<br />";
+
 	
 	foreach ($all_answers as $ans) {
 		echo "<input type='$type' " . isAnswerSelected($ques, $ans) . " name='answer-{$ques->ID}[]' id='answer-id-{$ans->ID}' class='answer' value='{$ans->ID}' />\n";
@@ -202,11 +201,11 @@ foreach ($question as $ques) {
 		echo "<input type='$type' " . isAnswerSelected($ques, $ans, 'user') . " name='answer-{$ques->ID}[]' id='user-answer-id-{$ans->ID}' class='answer' value='user-answer' />\n";
 		
 		if($ques->user_answer_format == 'textarea')
-			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer'>" . getUserAnswerValue($ques, $ans) . "</textarea>";
+			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer '>" . getUserAnswerValue($ques, $ans) . "</textarea>";
 		elseif($ques->user_answer_format == 'checkbox')
 			echo "<input type='checkbox' name='user-answer-{$ques->ID}' class='user-answer' value='1' />";
 		else
-			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer' value='" . getUserAnswerValue($ques, $ans) . "' />";
+			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer general-input' value='" . getUserAnswerValue($ques, $ans) . "' />";
 		
 		echo "<br />\n";
 	}
