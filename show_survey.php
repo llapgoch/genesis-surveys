@@ -145,7 +145,8 @@ if(isset($_POST['action']) && $_POST['action'] && !$errors) {
 
 		}
 		
-		print t("Thanks for taking the survey. Your input is very valuable to us");
+		print t("<div class='success-complete'><h2>Survey Complete</h2></div>");
+		print t("<p class='success-complete'>Thanks for taking the survey. Your input is very valuable to us</p>");
 
 	
 } else { // Show The survey.
