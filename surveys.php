@@ -60,8 +60,8 @@ function check_login_surveys($userLogin, $user){
 }
 
 function get_survey_completion_message(){
-	if($uri = get_noncompleted_survey()){
-		return "<a href='$uri'>" . __('Please click here to complete a quick survey on our clinical trial') . "</a>";
+	if($survey = get_noncompleted_survey()){
+		return "<a href='" . $survey->uri . "'>" . __("Please click here to complete the quick survey <strong>'" . $survey->name . "'") . "</strong></a>";
 	}
 }
 
@@ -109,11 +109,15 @@ function get_noncompleted_survey(){
 	global $wpdb;
 	$user = wp_get_current_user();
 	
-// 	 if(isset(wp_get_current_user()->roles)){
-// 		 if(!in_array('subscriber', wp_get_current_user()->roles)){
-// //			 return;
-// 		 }
-// 	 }
+	if(!$user || !$user->ID){
+		return;
+	}
+	
+	 // if(isset(wp_get_current_user()->roles)){
+	 // 		 if(!in_array('subscriber', wp_get_current_user()->roles)){
+	 // 			 return;
+	 // 		 }
+	 // }
 	 	
  	$row = $wpdb->get_row($sql = "SELECT s.* 
  		FROM {$wpdb->prefix}surveys_survey s
@@ -141,8 +145,10 @@ function get_noncompleted_survey(){
 	if(!$uri = get_permalink($pageID)){
 		return;
 	}
+    
+    $row->uri = $uri;
 
-	return $uri;
+	return $row;
 }
 
 
@@ -175,7 +181,7 @@ function surveys_shortcode( $attr ) {
 	global $wpdb;
 	
 	if(!is_user_logged_in()){
-		echo "<p>You must be logged in to view questionnaires.</p>";
+		echo "<p>You must be logged in to view surveys.</p>";
 		return;
 	}
 	
@@ -185,7 +191,8 @@ function surveys_shortcode( $attr ) {
 	if($wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}surveys_result 
 		WHERE user_id=%d AND survey_ID=%d",  wp_get_current_user()->ID, $survey_id))){
 		
-		echo "<p>You have already completed this questionnaire.  Thank you.</p>";
+
+		echo "<h2 class='success-complete'>You have already completed this survey.  Thank you.</h2>";
 		return;
 	}
 	
