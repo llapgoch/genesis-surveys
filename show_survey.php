@@ -145,8 +145,10 @@ if(isset($_POST['action']) && $_POST['action'] && !$errors) {
 
 		}
 		
-		print t("<div class='success-complete'><h2>Survey Complete</h2></div>");
-		print t("<p class='success-complete'>Thanks for taking the survey. Your input is very valuable to us</p>");
+        echo apply_filters('survey_success', 
+            "<h2>Survey Complete</h2>
+		     <p>Thanks for taking the survey. Your input is very valuable to us</p>"
+        );
 
 	
 } else { // Show The survey.
@@ -166,7 +168,9 @@ if(!is_numeric($questions_per_page)) $questions_per_page = 0;
 
 if($errors){
 ?>
-<div class="alert error spaced"><div class="msg">Please complete all of the required questions</div><a href="#" class="toggle-alert">Toggle</a></div>
+<div class='fusion-alert alert error alert-danger alert-shadow'>
+    <div class="msg">Please complete all of the required questions</div>
+</div>
 
 <?php
 }

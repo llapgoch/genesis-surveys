@@ -12,6 +12,6 @@ form.survey-form {
 	margin-top:20px;
 }
 
-.error{
+label.error{
 	color:red;
 }
