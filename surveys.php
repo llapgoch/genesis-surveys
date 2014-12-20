@@ -61,7 +61,7 @@ function check_login_surveys($userLogin, $user){
 
 function get_survey_completion_message(){
 	if($survey = get_noncompleted_survey()){
-		return "<a href='" . $survey->uri . "'>" . __("Your dietitian will email you on three separate dates and ask you to complete this feedback questionnaire as part of the research study you. Please click here to provide your feedback. <strong><br />" . $survey->name) . "</strong></a>";
+		return "<a href='" . $survey->uri . "'>" . __($survey->link_text) . "</a>";
 	}
 }
 

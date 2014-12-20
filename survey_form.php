@@ -31,7 +31,7 @@ else e('Edit Survey'); ?></h2>
 <div class="postbox">
 <h3 class="hndle"><span><?php e('Link Text') ?></span></h3>
 <div class="inside">
-<input type='text' name='link_text' value='<?php echo esc_attr($survey_details->link_text); ?>' />
+<input type='text' name='link_text' style="width:100%" value='<?php echo esc_attr($survey_details->link_text); ?>' />
 </div></div>
 
 <div class="postbox">
