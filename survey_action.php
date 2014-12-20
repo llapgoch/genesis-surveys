@@ -7,17 +7,35 @@ include('wpframe.php');
 // I could have put this in the survey_form.php - but the redirect will not work.
 if(isset($_REQUEST['submit'])) {
 	if($_REQUEST['action'] == 'edit') { //Update goes here
-		$wpdb->get_results("UPDATE {$wpdb->prefix}surveys_survey SET name='$_REQUEST[name]',description='$_REQUEST[description]',status='$_REQUEST[status]' WHERE '$_REQUEST[survey]'=ID");
+		$wpdb->update(
+            $wpdb->prefix . "surveys_survey",
+            array(
+                'name' => $_REQUEST['name'],
+                'description' => $_REQUEST['description'],
+                'link_text' => $_REQUEST['link_text'],
+                'status' => $_REQUEST['status'],
+            ),
+            array(
+                'ID' => $_REQUEST['survey']
+            )
+        );
 		
 		wp_redirect($wpframe_wordpress . '/wp-admin/edit.php?page=surveys/survey.php&message=updated');
 	
 	} else {
-		$wpdb->get_results("INSERT INTO {$wpdb->prefix}surveys_survey(name,description,status,added_on) VALUES('$_REQUEST[name]','$_REQUEST[description]','$_REQUEST[status]',NOW())");
+        $wpdb->insert(
+            $wpdb->prefix . "surveys_survey",
+            array(
+                'name' => $_REQUEST['name'],
+                'description' => $_REQUEST['description'],
+                'link_text' => $_REQUEST['link_text'],
+                'status' => $_REQUEST['status'],
+            )        
+        );
+        
 		$survey_id = $wpdb->insert_id;
 		
 		// Create the page for the survey
-		
-
 	 	$pageData = array(
 		'post_title' => $_REQUEST[name],
 			'comment_status' => 'closed',

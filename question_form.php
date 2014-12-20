@@ -67,7 +67,7 @@ function init() {
 			if(this.value) answer_count++;
 		});
 		if(document.getElementById("allow_user_answer").checked == false && answer_count < 2) {
-			alert("Please enter atleast two answers");
+			alert("Please enter at least two answers");
 			e.preventDefault();
 			e.stopPropagation();
 		}

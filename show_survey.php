@@ -178,6 +178,8 @@ if($errors){
 
 <div class="survey-area <?php if($questions_per_page != 1) echo 'multi-question'; ?>">
 <form action="" method="post" class="input-form survey-form" id="survey-<?php echo $survey_id?>">
+<h2><?php echo $description; ?></h2>
+
 <?php
 $question_count = 1;
 

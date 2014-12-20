@@ -61,7 +61,7 @@ function check_login_surveys($userLogin, $user){
 
 function get_survey_completion_message(){
 	if($survey = get_noncompleted_survey()){
-		return "<a href='" . $survey->uri . "'>" . __("Please click here to complete the quick survey <strong>'" . $survey->name . "'") . "</strong></a>";
+		return "<a href='" . $survey->uri . "'>" . __("Your dietitian will email you on three separate dates and ask you to complete this feedback questionnaire as part of the research study you. Please click here to provide your feedback. <strong><br />" . $survey->name) . "</strong></a>";
 	}
 }
 
@@ -196,7 +196,8 @@ function surveys_shortcode( $attr ) {
 		return;
 	}
 	
-	
+	$description = $wpdb->get_var($wpdb->prepare("SELECT description FROM {$wpdb->prefix}surveys_survey WHERE ID=%d", $survey_id));
+    
 	$contents = '';
 	if(is_numeric($survey_id)) { // Basic validiation - more on the show_quiz.php file.
 		ob_start();
@@ -274,7 +275,8 @@ function surveys_activate() {
 					) ;
 				CREATE TABLE {$wpdb->prefix}surveys_survey (
 					ID int(11) unsigned NOT NULL auto_increment,
-					name varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+					name varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
+                    link_text varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL,
 					description mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 					final_screen mediumtext CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
 					status enum('1','0') NOT NULL default '0',

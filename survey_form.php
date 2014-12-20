@@ -7,7 +7,7 @@ if($_REQUEST['action'] == 'edit') $action = 'edit';
 
 $survey_details = array();
 if($action == 'edit') {
-	$survey_details = $wpdb->get_row("SELECT name,description,status FROM {$wpdb->prefix}surveys_survey WHERE ID=$_REQUEST[survey]");
+	$survey_details = $wpdb->get_row("SELECT name,description,status, link_text FROM {$wpdb->prefix}surveys_survey WHERE ID=$_REQUEST[survey]");
 }
 ?>
 
@@ -26,6 +26,12 @@ else e('Edit Survey'); ?></h2>
 <h3 class="hndle"><span><?php e('Survey Name') ?></span></h3>
 <div class="inside">
 <input type='text' name='name' value='<?php echo esc_attr($survey_details->name); ?>' />
+</div></div>
+
+<div class="postbox">
+<h3 class="hndle"><span><?php e('Link Text') ?></span></h3>
+<div class="inside">
+<input type='text' name='link_text' value='<?php echo esc_attr($survey_details->link_text); ?>' />
 </div></div>
 
 <div class="postbox">
