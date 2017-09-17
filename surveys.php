@@ -177,6 +177,25 @@ function surveys_init() {
  * This will scan all the content pages that wordpress outputs for our special code. If the code is found, it will replace the requested survey.
  */
 add_shortcode( 'SURVEYS', 'surveys_shortcode' );
+add_shortcode( 'SURVEYS_UNIVERSAL', 'surveys_shortcode' );
+
+function surveys_universal_shortcode( $attr ) {
+	global $wpdb;
+
+	$survey_id = $attr[0];
+	$description = $wpdb->get_var($wpdb->prepare("SELECT description FROM {$wpdb->prefix}surveys_survey WHERE ID=%d", $survey_id));
+
+	$contents = '';
+	if(is_numeric($survey_id)) { // Basic validiation - more on the show_quiz.php file.
+		ob_start();
+		include(ABSPATH . 'wp-content/plugins/surveys/show_survey.php');
+		$contents = ob_get_contents();
+		ob_end_clean();
+	}
+	return $contents;
+}
+
+
 function surveys_shortcode( $attr ) {
 	global $wpdb;
 	
@@ -184,13 +203,13 @@ function surveys_shortcode( $attr ) {
 		echo "<p>You must be logged in to view surveys.</p>";
 		return;
 	}
-	
+
 	$survey_id = $attr[0];
-	
+
 	// Check whether the user has already completed this survey.
-	if($wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}surveys_result 
+	if($wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->prefix}surveys_result
 		WHERE user_id=%d AND survey_ID=%d",  wp_get_current_user()->ID, $survey_id))){
-		
+
 
 		echo "<h2 class='success-complete'>You have already completed this survey.  Thank you.</h2>";
 		return;
