@@ -177,7 +177,7 @@ function surveys_init() {
  * This will scan all the content pages that wordpress outputs for our special code. If the code is found, it will replace the requested survey.
  */
 add_shortcode( 'SURVEYS', 'surveys_shortcode' );
-add_shortcode( 'SURVEYS_UNIVERSAL', 'surveys_shortcode' );
+add_shortcode( 'SURVEYS_UNIVERSAL', 'surveys_universal_shortcode' );
 
 function surveys_universal_shortcode( $attr ) {
 	global $wpdb;
