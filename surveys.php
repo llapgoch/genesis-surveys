@@ -183,11 +183,13 @@ function surveys_universal_shortcode( $attr ) {
 	global $wpdb;
 
 	$survey_id = $attr[0];
+	$default_answers = isset($attr[1]) ? $attr[1] : array();
 	$description = $wpdb->get_var($wpdb->prepare("SELECT description FROM {$wpdb->prefix}surveys_survey WHERE ID=%d", $survey_id));
 
 	$contents = '';
 	if(is_numeric($survey_id)) { // Basic validiation - more on the show_quiz.php file.
 		ob_start();
+
 		include(ABSPATH . 'wp-content/plugins/surveys/show_survey.php');
 		$contents = ob_get_contents();
 		ob_end_clean();
