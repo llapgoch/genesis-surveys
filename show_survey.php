@@ -1,7 +1,15 @@
 <?php
+//global $default_answers;
 include('wpframe.php');
 if(!session_id()){	session_start();}
 wpframe_stop_direct_call(__FILE__);
+
+
+
+// Pass in default_answers when calling surveys_universal_shortcode method (added for Genesis hidden fields)
+if(empty($default_answers)){
+	$default_answers = array();
+}
 
 function isAnswerSelected($question, $ans, $type = null){
 	if(!$ans |! $_POST){
@@ -24,7 +32,11 @@ function isAnswerSelected($question, $ans, $type = null){
 	return '';
 }
 
-function getUserAnswerValue($question, $ans){
+function getUserAnswerValue($question, $ans, $defaults = array()){
+	if(isset($defaults[$question->question])){
+		return $defaults[$question->question];
+	}
+
 	if(!$ans |! $_POST){
 		return '';
 	}
@@ -32,7 +44,7 @@ function getUserAnswerValue($question, $ans){
 	if(!isset($_POST['user-answer-' . $question->ID])){
 		return '';
 	}
-	
+
 	return esc_attr(stripslashes($_POST['user-answer-' . $question->ID]));
 }
 
@@ -184,12 +196,13 @@ if($errors){
 $question_count = 1;
 
 foreach ($question as $ques) {
-	
 	echo "<div class='question-container survey-question' id='question-$question_count'>";
 	?>
+	<?php if($ques->user_answer_format !== 'hidden'): ?>
 	<div class="title">
 		<h3><?php echo "<label class='general-label " . ($ques->required ? 'answer_required' : '') . ' ' . (isset($errors["answer-{$ques->ID}"]) ? "error" : "") . "'>{$ques->question}</label>";?></h3>
 	</div>
+	<?php endif; ?>
 	<?php
 	echo "<input type='hidden' name='question_id[]' value='{$ques->ID}' />\n";
 	$all_answers = $wpdb->get_results("SELECT ID,answer FROM {$wpdb->prefix}surveys_answer WHERE question_id={$ques->ID} ORDER BY sort_order");
@@ -208,11 +221,13 @@ foreach ($question as $ques) {
 		echo "<input type='$type' " . isAnswerSelected($ques, $ans, 'user') . " name='answer-{$ques->ID}[]' id='user-answer-id-{$ans->ID}' class='answer' value='user-answer' />\n";
 		
 		if($ques->user_answer_format == 'textarea')
-			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer '>" . getUserAnswerValue($ques, $ans) . "</textarea>";
+			echo "<textarea name='user-answer-{$ques->ID}' rows='5' cols='30' class='user-answer '>" . getUserAnswerValue($ques, $ans, $default_answers) . "</textarea>";
 		elseif($ques->user_answer_format == 'checkbox')
 			echo "<input type='checkbox' name='user-answer-{$ques->ID}' class='user-answer' value='1' />";
+		elseif($ques->user_answer_format == 'hidden')
+			echo "<input type='hidden' name='user-answer-{$ques->ID}' class='user-answer general-input' value='" . getUserAnswerValue($ques, $ans, $default_answers) . "' />";
 		else
-			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer general-input' value='" . getUserAnswerValue($ques, $ans) . "' />";
+			echo "<input type='text' name='user-answer-{$ques->ID}' class='user-answer general-input' value='" . getUserAnswerValue($ques, $ans, $default_answers) . "' />";
 		
 		echo "<br />\n";
 	}

@@ -115,6 +115,7 @@ for($i=1; $i<=$anscount; $i++) { ?>
 <option value="entry" <?php if($question->user_answer_format == 'entry') echo 'selected="selected"'; ?>><?php e('Text Entry') ?></option>
 <option value="textarea" <?php if($question->user_answer_format == 'textarea') echo 'selected="selected"'; ?>><?php e('Textarea') ?></option>
 <option value="checkbox" <?php if($question->user_answer_format == 'checkbox') echo 'selected="selected"'; ?>><?php e('CheckBox') ?></option>
+	<option value="hidden" <?php if($question->user_answer_format == 'hidden') echo 'selected="selected"'; ?>><?php e('Hidden') ?></option>
 </select>
 
 </div>
