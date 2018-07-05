@@ -66,7 +66,7 @@ if (count($results)) {
 		<td><?php echo esc_attr($fullname) ?></td>
 		<td><?php if($userDetails->user_email) echo "<a href='mailto:". esc_attr($userDetails->user_email)."'>". esc_attr($userDetails->user_email)."</a>"; ?></td>
 		<td><?php echo date(get_option('date_format') . ' ' . get_option('time_format'), strtotime($survey->added_on)) ?></td>
-		<td><a href='edit.php?page=surveys/show_individual_response.php&amp;result=<?php echo $survey->ID?>&amp;survey=<?php echo $survey_id ?>&amp;action=show' class='show-result'><?php e('Show'); ?></a></td>
+		<td><a href='edit.php?page=moosesurveys/show_individual_response.php&amp;result=<?php echo $survey->ID?>&amp;survey=<?php echo $survey_id ?>&amp;action=show' class='show-result'><?php e('Show'); ?></a></td>
 		<td><a href='edit.php?page=surveys/individual_responses.php&amp;action=delete&amp;result=<?php echo $survey->ID?>&amp;survey=<?php echo $survey_id ?>' class='delete' onclick="return confirm('<?php e(addslashes("You are about to delete this Result. Press 'OK' to delete and 'Cancel' to stop."))?>');"><?php e('Delete')?></a></td>
 		</tr>
 <?php

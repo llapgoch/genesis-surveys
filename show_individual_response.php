@@ -4,7 +4,14 @@ wpframe_stop_direct_call(__FILE__);
 
 $result_id = $_REQUEST['result'];
 
-$survey = $wpdb->get_row("SELECT S.ID, S.name, R.name AS rname, R.email, R.added_on FROM {$wpdb->prefix}surveys_survey AS S INNER JOIN {$wpdb->prefix}surveys_result AS R ON S.ID=R.survey_ID WHERE R.ID=$result_id");
+$survey = $wpdb->get_row($sql = "
+	SELECT S.ID, S.name, U.display_name AS rname, U.user_email, R.added_on 
+	FROM {$wpdb->prefix}surveys_survey AS S 
+	INNER JOIN {$wpdb->prefix}surveys_result AS R 
+		ON S.ID=R.survey_ID
+	INNER JOIN {$wpdb->prefix}users U
+		ON U.ID = R.user_id
+	WHERE R.ID=$result_id");
 
 print "<div class='wrap'><h2>" . t('Response to ') . stripslashes($survey->name) . "</h2>";
 print "<h4>";
